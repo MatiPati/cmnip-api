@@ -57,11 +57,38 @@ app.get('/name/:name', (req, res) => {
             resp_sex = obj.Plec;
         }
     });
-    if(resp_name=="")
+    if (resp_name == "")
         res.json("There is no name like yours in our database sorry :(");
-    const response =JSON.parse('{"name":"' + resp_name + '","sex":"' + resp_sex + '", "years":{' + resp_years + '}}');
+    const response = JSON.parse('{"name":"' + resp_name + '","sex":"' + resp_sex + '", "years":{' + resp_years + '}}');
 
     res.json(response);
+});
+
+app.get('/search/:search', (req, res) => {
+    const search = req.params.search.toUpperCase();
+    let resp_obj=[];
+    file.forEach((obj) => {
+        if (obj.Imie.includes(search)) {
+            let done=false;
+            resp_obj.forEach((resp)=>{
+                if(resp.name==obj.Imie){
+                    resp.years+='"' + obj.Rok + '" : {"uses":"' + obj.Liczba + '"},';
+                    done=true;
+                }
+            });
+            if(!done) {
+                let obb = resp_obj.push({
+                    name: obj.Imie,
+                    sex: obj.Plec,
+                    years: '{"' + obj.Rok + '" : {"uses":"' + obj.Liczba + '"},'
+                });
+            }
+        }
+    });
+    resp_obj.forEach((obj)=>{
+        obj.years=JSON.parse(obj.years.slice(0,-1)+"}");
+    });
+    res.json(resp_obj);
 });
 
 httpServer.listen(port - 1);
