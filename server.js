@@ -46,19 +46,23 @@ app.get('/names', (req, res) => {
 });
 
 app.get('/name/:name', (req, res) => {
-    const name = req.params.name;
-    const year = parseInt(req.query.year);
-    let years = true;
-    if (isNaN(year))
-        years = false;
-    let response=[];
-    file.forEach((obj)=>{
-        if(obj.Imie==name){
-            response.push(JSON.parse(obj.Rok+":["+obj.Imie+","+obj.Liczba+","+obj.Plec+"]"));
+    const name = req.params.name.toUpperCase();
+    let resp_name = "";
+    let resp_sex = "";
+    let resp_years = [];
+    file.forEach((obj) => {
+        if (obj.Imie == name) {
+            resp_years.push('"' + obj.Rok + '":{"uses":"' + obj.Liczba + '"}');
+            resp_name = obj.Imie;
+            resp_sex = obj.Plec;
         }
     });
+    if(resp_name=="")
+        res.json("There is no name like yours in our database sorry :(");
+    const response =JSON.parse('{"name":"' + resp_name + '","sex":"' + resp_sex + '", "years":{' + resp_years + '}}');
+
+    res.json(response);
 });
 
-httpServer.listen(port-1);
+httpServer.listen(port - 1);
 httpsServer.listen(port);
-
