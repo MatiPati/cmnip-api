@@ -1,0 +1,25 @@
+{
+  "name": "cmnip-api",
+  "version": "1.0.0",
+  "description": "api for cmnip project",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatiPati/cmnip-api.git"
+  },
+  "author": "Patryk Kozarski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MatiPati/cmnip-api/issues"
+  },
+  "homepage": "https://github.com/MatiPati/cmnip-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "jsonfile": "^5.0.0",
+    "morgan": "^1.9.1"
+  }
+}
