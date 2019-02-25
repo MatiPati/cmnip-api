@@ -2,11 +2,21 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const jsonfile = require('jsonfile');
-const port = 11290;
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
+
+const port = 11290; //11289 for http
 const app = express();
 
 app.use(morgan('combined'));
 app.use(cors());
+
+const privateKey = fs.readFileSync('ssl/server.key', 'utf8');
+const certificate = fs.readFileSync('ssl/server.crt', 'utf8');
+const credentials = {key: privateKey, cert: certificate};
+const httpsServer = https.createServer(credentials, app);
+const httpServer = http.createServer(app);
 
 const file = jsonfile.readFileSync("Poland_names.json");
 
@@ -35,6 +45,20 @@ app.get('/names', (req, res) => {
     res.json(response);
 });
 
-app.listen(port, () => {
-    console.log("app listen on " + port);
+app.get('/name/:name', (req, res) => {
+    const name = req.params.name;
+    const year = parseInt(req.query.year);
+    let years = true;
+    if (isNaN(year))
+        years = false;
+    let response=[];
+    file.forEach((obj)=>{
+        if(obj.Imie==name){
+            response.push(JSON.parse(obj.Rok+":["+obj.Imie+","+obj.Liczba+","+obj.Plec+"]"));
+        }
+    });
 });
+
+httpServer.listen(port-1);
+httpsServer.listen(port);
+
