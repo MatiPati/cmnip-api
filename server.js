@@ -67,6 +67,12 @@ app.get('/name/:name', (req, res) => {
 app.get('/search/:search', (req, res) => {
     const search = req.params.search.toUpperCase();
     let resp_obj=[];
+    let limit = parseInt(req.query.limit);
+    let skip_limit=false;
+    if(isNaN(limit)) {
+        skip_limit=true;
+        limit=0;
+    }
     file.forEach((obj) => {
         if (obj.Imie.includes(search)) {
             let done=false;
@@ -76,7 +82,8 @@ app.get('/search/:search', (req, res) => {
                     done=true;
                 }
             });
-            if(!done) {
+            if(!done && (limit>0 || skip_limit)) {
+                limit--;
                 let obb = resp_obj.push({
                     name: obj.Imie,
                     sex: obj.Plec,
