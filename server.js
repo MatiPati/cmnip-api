@@ -66,23 +66,23 @@ app.get('/name/:name', (req, res) => {
 
 app.get('/search/:search', (req, res) => {
     const search = req.params.search.toUpperCase();
-    let resp_obj=[];
+    let resp_obj = [];
     let limit = parseInt(req.query.limit);
-    let skip_limit=false;
-    if(isNaN(limit)) {
-        skip_limit=true;
-        limit=0;
+    let skip_limit = false;
+    if (isNaN(limit)) {
+        skip_limit = true;
+        limit = 0;
     }
     file.forEach((obj) => {
         if (obj.Imie.includes(search)) {
-            let done=false;
-            resp_obj.forEach((resp)=>{
-                if(resp.name==obj.Imie){
-                    resp.years+='"' + obj.Rok + '" : {"uses":"' + obj.Liczba + '"},';
-                    done=true;
+            let done = false;
+            resp_obj.forEach((resp) => {
+                if (resp.name == obj.Imie) {
+                    resp.years += '"' + obj.Rok + '" : {"uses":"' + obj.Liczba + '"},';
+                    done = true;
                 }
             });
-            if(!done && (limit>0 || skip_limit)) {
+            if (!done && (limit > 0 || skip_limit)) {
                 limit--;
                 let obb = resp_obj.push({
                     name: obj.Imie,
@@ -92,8 +92,8 @@ app.get('/search/:search', (req, res) => {
             }
         }
     });
-    resp_obj.forEach((obj)=>{
-        obj.years=JSON.parse(obj.years.slice(0,-1)+"}");
+    resp_obj.forEach((obj) => {
+        obj.years = JSON.parse(obj.years.slice(0, -1) + "}");
     });
     res.json(resp_obj);
 });
