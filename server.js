@@ -104,14 +104,15 @@ app.get('/compare/:name1/:name2', (req, res) => {
     let uses1 = [];
     let uses2 = [];
     let year = file[0].Rok;
-    let start_year=year;
+    let start_year = year;
     file.forEach((obj) => {
-        if(obj.Rok>year){
-            if(uses1.length<year-start_year)
-                uses1.push(0);
-            if(uses2.length<year-start_year)
-                uses2.push(0);
+        if (obj.Rok > year + 1)
             year++;
+        if (obj.Rok > year) {
+            if (uses1.length <= year - start_year)
+                uses1.push(0);
+            if (uses2.length <= year - start_year)
+                uses2.push(0);
         }
         if (obj.Imie == name1) {
             uses1.push(obj.Liczba);
@@ -121,17 +122,21 @@ app.get('/compare/:name1/:name2', (req, res) => {
             uses2.push(obj.Liczba);
         }
     });
-    let resp={
+    year++;
+    if (uses1.length <= year - start_year)
+        uses1.push(0);
+    if (uses2.length <= year - start_year)
+        uses2.push(0);
+    let resp = {
         "name1": name1,
         "name2": name2
-        //"years":{}
     };
-    let years="{";
-    for(let i= start_year;i<year;i++){
-        years+='"'+i+'":{"uses1":"'+uses1[i-start_year]+'","uses2":"'+uses2[i-start_year]+'","difference":"'+(uses1[i-start_year]-uses2[i-start_year])+'"},';
+    let years = "{";
+    for (let i = start_year; i <= year; i++) {
+        years += '"' + i + '":{"uses1":"' + uses1[i - start_year] + '","uses2":"' + uses2[i - start_year] + '","difference":"' + (uses1[i - start_year] - uses2[i - start_year]) + '"},';
     }
-    years=years.slice(0,-1)+"}";
-    resp.years=JSON.parse(years);
+    years = years.slice(0, -1) + "}";
+    resp.years = JSON.parse(years);
     res.json(resp);
 });
 
