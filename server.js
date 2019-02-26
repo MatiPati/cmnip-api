@@ -129,12 +129,16 @@ app.get('/compare/:name1/:name2', (req, res) => {
         uses2.push(0);
     let resp = {
         "name1": name1,
-        "name2": name2
+        "name2": name2,
+        "sum1": 0,
+        "sum2": 0
     };
     let years = "{";
     for (let i = start_year; i <= year; i++) {
         years += '"' + i + '":{"uses1":"' + uses1[i - start_year] + '","uses2":"' + uses2[i - start_year] + '",' +
             '"difference":"' + (uses1[i - start_year] - uses2[i - start_year]) + '","sum":"' + (parseInt(uses1[i - start_year]) + parseInt(uses2[i - start_year])) + '"},';
+        resp.sum1 += parseInt(uses1[i - start_year]);
+        resp.sum2 += parseInt(uses2[i - start_year]);
     }
     years = years.slice(0, -1) + "}";
     resp.years = JSON.parse(years);
