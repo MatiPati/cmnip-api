@@ -98,9 +98,49 @@ app.get('/search/:search', (req, res) => {
     res.json(resp_obj);
 });
 
+app.get('/compare/:name1/:name2', (req, res) => {
+    const name1 = req.params.name1.toUpperCase();
+    const name2 = req.params.name2.toUpperCase();
+    let uses1 = [];
+    let uses2 = [];
+    let year = file[0].Rok;
+    let start_year=year;
+    file.forEach((obj) => {
+        if(obj.Rok>year){
+            if(uses1.length<year-start_year)
+                uses1.push(0);
+            if(uses2.length<year-start_year)
+                uses2.push(0);
+            year++;
+        }
+        if (obj.Imie == name1) {
+            uses1.push(obj.Liczba);
+
+        }
+        if (obj.Imie == name2) {
+            uses2.push(obj.Liczba);
+        }
+    });
+    let resp={
+        "name1": name1,
+        "name2": name2
+        //"years":{}
+    };
+    let years="{";
+    for(let i= start_year;i<year;i++){
+        years+='"'+i+'":{"uses1":"'+uses1[i-start_year]+'","uses2":"'+uses2[i-start_year]+'","difference":"'+(uses1[i-start_year]-uses2[i-start_year])+'"},';
+    }
+    years=years.slice(0,-1)+"}";
+    resp.years=JSON.parse(years);
+    res.json(resp);
+});
+
 httpServer.listen(port - 1, () => {
-    console.log("++++++++++++++CMIP-API++++++++++++++\n+++++Created by Patryk Kozarski+++++\n++++++++++++++++++++++++++++++++++++\nListening as http at port " + (port - 1));
+    console.log("++++++++++++++CMIP-API++++++++++++++\n" +
+        "+++++Created by Patryk Kozarski+++++\n" +
+        "++++++++++++++++++++++++++++++++++++\n" +
+        "Listening http at port " + (port - 1));
 });
 httpsServer.listen(port, () => {
-    console.log("Listening as https at port " + port);
+    console.log("Listening https at port " + port);
 });
