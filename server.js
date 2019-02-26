@@ -34,7 +34,7 @@ app.get('/names', (req, res) => {
     file.forEach((obj) => {
         if (names.indexOf(obj.Imie) === -1)
             if (years) {
-                if (obj.Rok === year)
+                if (obj.Rok == year)
                     names.push(obj.Imie);
             } else
                 names.push(obj.Imie);
@@ -98,5 +98,9 @@ app.get('/search/:search', (req, res) => {
     res.json(resp_obj);
 });
 
-httpServer.listen(port - 1);
-httpsServer.listen(port);
+httpServer.listen(port - 1, () => {
+    console.log("++++++++++++++CMIP-API++++++++++++++\n+++++Created by Patryk Kozarski+++++\n++++++++++++++++++++++++++++++++++++\nListening as http at port " + (port - 1));
+});
+httpsServer.listen(port, () => {
+    console.log("Listening as https at port " + port);
+});
