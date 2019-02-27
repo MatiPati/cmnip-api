@@ -55,21 +55,30 @@ app.get('/name/:name', (req, res) => {
     file.forEach((obj) => {
         if (obj.Rok > current_year) {
             if (resp_years.length < obj.Rok - start_year)
-                resp_years.push('"' + current_year + '":{"uses":"0"}');
+                resp_years.push(0);
             current_year++;
         }
         if (obj.Imie == name) {
-            resp_years.push('"' + obj.Rok + '":{"uses":"' + obj.Liczba + '"}');
+            resp_years.push(obj.Liczba);
             resp_name = obj.Imie;
             resp_sex = obj.Plec;
         }
     });
     if (resp_name == "")
         res.json("There is no name like yours in our database sorry :(");
-    if (resp_years.length < current_year - start_year + 1)
-        resp_years.push('"' + current_year + '":{"uses":"0"}');
-    const response = JSON.parse('{"name":"' + resp_name + '","sex":"' + resp_sex + '", "years":{' + resp_years + '}}');
-
+    else if (resp_years.length < current_year - start_year + 1)
+        resp_years.push(0);
+    const response = {
+        name: resp_name,
+        sex: resp_sex,
+        years: "{"
+    };
+    current_year = file[0].Rok;
+    resp_years.forEach((year) => {
+        response.years += ('"' + current_year + '":{"uses":"' + year + '"},');
+        current_year++;
+    });
+    response.years = JSON.parse(response.years.slice(0, -1) + "}");
     res.json(response);
 });
 
